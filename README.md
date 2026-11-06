@@ -101,7 +101,7 @@ To update, install the new ZIP the same way. Your settings are kept.
 
 ## Settings
 
-Everything lives in the plugin panel in Quick Access. Settings are saved to
+The plugin's controls are in its Quick Access panel. Settings are saved to
 `~/homebrew/settings/ps5-dashboard/settings.json`.
 
 | Setting | What it does | Default |
@@ -121,6 +121,25 @@ Everything lives in the plugin panel in Quick Access. Settings are saved to
 | Style Steam's library | PS5-style capsules, focus and tabs in Steam's own library; turn off for Steam's look or TabMaster | On |
 | Clean home screen | Hides What's New, Friends and Recommended on Steam's own home | Off |
 | PlayStation-style font | Uses SST if installed, otherwise Noto Sans | On |
+
+### Per-game wallpapers
+
+PS5 Home prefers the game's custom Steam Hero. To test with a 16:9 image, use SteamGridDB's **Change artwork…**
+menu and choose a local file in **Manage → Hero**. Switch to another game and back to reload the artwork.
+
+An artwork importer can apply a base64-encoded PNG with
+`SteamClient.Apps.SetCustomArtworkForApp(appId, base64, "png", ELibraryAssetType.Hero)`. SteamGridDB clears the
+existing Hero and waits for it to be removed before applying a replacement.
+
+If the custom Hero cannot be displayed, PS5 Home checks for an image such as `620.jpg` in
+`~/homebrew/settings/ps5-dashboard/wallpapers/`, then falls back to Steam's default Hero or wide capsule.
+The wallpaper folder accepts JPEG, PNG, and WebP images up to 4 MiB.
+
+### Per-game menu music
+
+Open a game's context menu and choose **Change Menu Music**. Pick an MP3, Ogg, WAV, or FLAC file. The plugin
+copies the track into `~/homebrew/data/ps5-dashboard/menu-music/`. Choosing another file replaces it.
+PS5 Home loops the track while the game is focused or hovered and fades it out when you launch a game.
 
 ## Performance
 

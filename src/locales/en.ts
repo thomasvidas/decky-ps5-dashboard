@@ -66,6 +66,9 @@ const en = {
   details: "Details",
   moreOptions: "More options",
   gameMenu: "Game options",
+  changeMenuMusic: "Change Menu Music",
+  menuMusicSaved: "Menu music saved",
+  menuMusicFailed: "Could not save menu music",
   select: "Select",
   running: "Running",
 

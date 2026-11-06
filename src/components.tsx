@@ -1,5 +1,5 @@
 import { Focusable, GamepadButton, GamepadEvent, NavEntryPositionPreferences } from "@decky/ui";
-import { Component, ReactNode, RefObject, useEffect, useRef, useState } from "react";
+import { Component, ReactNode, RefObject, useEffect, useMemo, useRef, useState } from "react";
 
 import { t } from "./i18n";
 import { APP_TYPE_SHORTCUT, App, heroUrls, launch, openDetails, openGameMenu, portraitUrls, runningAppId } from "./steam";
@@ -10,7 +10,7 @@ const EDGE_PAD = 48;
 
 /** An <img> that walks through candidate URLs until one loads, then shows `fallback`. */
 export function Art({ sources, className, fallback }: { sources: string[]; className?: string; fallback?: ReactNode }) {
-  const key = sources.join("|");
+  const key = useMemo(() => sources.join("|"), [sources]);
   const [index, setIndex] = useState(0);
   useEffect(() => setIndex(0), [key]);
   if (index >= sources.length) return <>{fallback ?? null}</>;
@@ -71,6 +71,7 @@ interface TileProps {
   label: string;
   preferredFocus?: boolean;
   onFocus?: (el: HTMLElement) => void;
+  onHover?: (hovered: boolean) => void;
   onActivate: () => void;
   onOptions?: () => void;
   /** Select (View) and ≡ (Menu): the item's menu, like in Steam's library. */
@@ -107,7 +108,8 @@ export function Tile(p: TileProps) {
       focusClassName={FOCUSED_CLASS}
       noFocusRing
       preferredFocus={p.preferredFocus}
-      onActivate={p.onActivate}
+      onClick={p.onActivate}
+      onOKButton={p.onActivate}
       onOKActionDescription={p.okLabel}
       onOptionsButton={p.onOptions}
       onOptionsActionDescription={p.onOptions ? t.details : undefined}
@@ -122,7 +124,7 @@ export function Tile(p: TileProps) {
       }
       actionDescriptionMap={p.onMenu ? { [GamepadButton.SELECT]: t.gameMenu } : undefined}
     >
-      <div className="psd-tile-box">
+      <div className="psd-tile-box" onMouseEnter={() => p.onHover?.(true)} onMouseLeave={() => p.onHover?.(false)}>
         {p.size === "home" && (
           <div className="psd-tile-aura">
             <div className="psd-tile-aura-spin" />
@@ -142,12 +144,14 @@ export function GameTile({
   size,
   preferredFocus,
   onFocus,
+  onHover,
   art = "portrait",
 }: {
   app: App;
   size?: TileProps["size"];
   preferredFocus?: boolean;
   onFocus?: (app: App, el: HTMLElement) => void;
+  onHover?: (appid?: number) => void;
   art?: "portrait" | "hero";
 }) {
   const running = runningAppId() === app.appid;
@@ -158,6 +162,7 @@ export function GameTile({
       label={app.display_name}
       preferredFocus={preferredFocus}
       onFocus={(el) => onFocus?.(app, el)}
+      onHover={onHover && ((hovered) => onHover(hovered ? app.appid : undefined))}
       onActivate={() => launch(app)}
       onOptions={() => openDetails(app)}
       onMenu={(anchor) => openGameMenu(app, anchor)}

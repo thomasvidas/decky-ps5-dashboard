@@ -26,7 +26,7 @@ import {
   setCurrentSettings,
   withDefaults,
 } from "./settings";
-import { LIBRARY_ROUTE, openDonate } from "./steam";
+import { LIBRARY_ROUTE, openDonate, syncGameMusicMenu } from "./steam";
 import { buildCss } from "./theme";
 import { Ps5Shell } from "./Shell";
 
@@ -74,6 +74,7 @@ function render() {
   setCurrentSettings(settings);
   syncHomePatch();
   if (unloaded) return;
+  syncGameMusicMenu(settings.enabled);
   if (settings.enabled) applyCss(buildCss(settings, classes.sel), settings.palette ? accentColor(settings.accent) : null);
   else removeCss();
 }
@@ -82,6 +83,7 @@ function startClassRetry() {
   let tries = 0;
   retryTimer = window.setInterval(() => {
     tries++;
+    syncGameMusicMenu(settings.enabled);
     // Rescan webpack: Steam loads some modules (and extra copies of others) only when they're first shown.
     const next = resolveClasses(true);
     if (buildCss(settings, next.sel) !== buildCss(settings, classes.sel)) {
@@ -325,6 +327,7 @@ export default definePlugin(() => {
       unloaded = true;
       if (retryTimer !== undefined) window.clearInterval(retryTimer);
       syncHomePatch();
+      syncGameMusicMenu(false);
       routerHook.removeRoute(LIBRARY_ROUTE);
       removeCss();
     },

@@ -13,8 +13,8 @@ export const PS5_CSS = `
   --psd-cf: var(--psd-focus, #FFFFFF);
   --psd-cr: var(--psd-radius, 12px);
   --psd-cglow: 0 0 0 0.4vh var(--psd-cf), 0 0 3.2vh color-mix(in srgb, var(--psd-cf) 45%, transparent);
-  --psd-small-tile-size: 17vh;
-  --psd-small-game-width: calc(var(--psd-small-tile-size) * var(--psd-capsule-width-scale, 1));
+  --psd-small-game-size: 18.5vh;
+  --psd-small-game-width: calc(var(--psd-small-game-size) * var(--psd-capsule-width-scale, 1));
   position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
   overflow: hidden; color: #fff;
   background: radial-gradient(ellipse at 85% -10%, color-mix(in srgb, var(--psd-ca) 55%, #04060c) 0%, #070b16 45%, #04060c 80%);
@@ -90,7 +90,10 @@ export const PS5_CSS = `
 @keyframes psd-intro { from { opacity: 0; transform: translateX(8vh); } to { opacity: 1; transform: none; } }
 
 /* ---------- home ---------- */
-.psd-scroller { position: absolute; inset: 0; z-index: 2; overflow: hidden; }
+.psd-scroller {
+  --psd-big: 19.5vh;
+  position: absolute; inset: 0; z-index: 2; overflow: hidden;
+}
 /* Going down to the lower rows fades the game row and info out, so nothing slides under the tabs. */
 .psd-home-row, .psd-hero { transition: opacity 250ms ease; }
 .psd-lowered .psd-home-row, .psd-lowered .psd-hero { opacity: 0; }
@@ -112,7 +115,7 @@ export const PS5_CSS = `
  * The section clips (overflow: clip can't be scrolled, so focus can't push the row away).
  */
 .psd-home-row {
-  --psd-slot: 12vh; --psd-big: 18vh; --psd-gap: 1.8vh;
+  --psd-slot: calc(var(--psd-big) * 2 / 3); --psd-gap: 1.8vh;
   --psd-game-slot-width: calc(var(--psd-slot) * var(--psd-capsule-width-scale, 1));
   --psd-game-big-width: calc(var(--psd-big) * var(--psd-capsule-width-scale, 1));
   margin-top: 0; padding: 3vh 0 3.6vh; overflow: hidden; overflow: clip;
@@ -125,7 +128,7 @@ export const PS5_CSS = `
 }
 /* Bottom padding keeps the cards clear of Steam's button-hint footer. */
 .psd-hero {
-  position: relative; height: 57vh; padding: 0 4vw 7vh;
+  position: relative; height: calc(75vh - var(--psd-big)); padding: 0 4vw 7vh;
   display: flex; flex-direction: column; justify-content: flex-end;
 }
 .psd-info { animation: psd-rise 400ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
@@ -215,9 +218,10 @@ export const PS5_CSS = `
 /* ---------- tiles ---------- */
 .psd-tile { position: relative; flex: 0 0 auto; border-radius: var(--psd-cr); transition: transform 150ms ease; }
 .psd-tile-normal { width: 22vh; height: 22vh; }
-.psd-tile-small { width: var(--psd-small-tile-size); height: var(--psd-small-tile-size); }
+.psd-tile-small { width: 17vh; height: 17vh; }
+.psd-game-tile { cursor: pointer; }
 .psd-tile-normal.psd-game-tile { width: calc(22vh * var(--psd-capsule-width-scale, 1)); }
-.psd-tile-small.psd-game-tile { width: var(--psd-small-game-width); }
+.psd-tile-small.psd-game-tile { width: var(--psd-small-game-width); height: var(--psd-small-game-size); }
 .psd-tile-box { position: absolute; inset: 0; border-radius: var(--psd-cr); }
 .psd-tile-art { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; background: #151a26; }
 .psd-tile-ring {
@@ -260,7 +264,7 @@ export const PS5_CSS = `
 .psd-tile-home .psd-tile-box {
   right: auto; bottom: auto; width: var(--psd-tile-big-width); height: var(--psd-big);
   border-radius: calc(var(--psd-cr) * 1.3);
-  transform: scale(0.6667); transform-origin: 0 0;
+  transform: scale(calc(2 / 3)); transform-origin: 0 0;
   transition: transform 340ms cubic-bezier(0.22, 0.8, 0.24, 1);
 }
 .psd-tile-home.psd-selected .psd-tile-box { transform: none; }

@@ -68,6 +68,9 @@ const it: Strings = {
   details: "Dettagli",
   moreOptions: "Altre opzioni",
   gameMenu: "Opzioni del gioco",
+  changeMenuMusic: "Cambia musica del menu",
+  menuMusicSaved: "Musica del menu salvata",
+  menuMusicFailed: "Impossibile salvare la musica del menu",
   select: "Seleziona",
   running: "In esecuzione",
 

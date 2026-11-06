@@ -72,6 +72,9 @@ const uk: Strings = {
   details: "Докладніше",
   moreOptions: "Інші дії",
   gameMenu: "Параметри гри",
+  changeMenuMusic: "Змінити музику меню",
+  menuMusicSaved: "Музику меню збережено",
+  menuMusicFailed: "Не вдалося зберегти музику меню",
   select: "Вибрати",
   running: "Запущена",
 

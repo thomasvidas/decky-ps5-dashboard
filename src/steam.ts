@@ -1,7 +1,8 @@
-import { Navigation, Router, findModuleByExport, showContextMenu } from "@decky/ui";
-import { createElement } from "react";
+import { MenuItem, Navigation, Patch, Router, afterPatch, fakeRenderComponent, findModuleByExport, removeHookStubs, showContextMenu } from "@decky/ui";
+import { ReactNode, cloneElement, createElement, isValidElement } from "react";
 
 import { t } from "./i18n";
+import { changeMenuMusic, fadeMenuMusicForLaunch } from "./menuMusic";
 
 /** The subset of Steam's SteamAppOverview this plugin reads. */
 export interface App {
@@ -99,7 +100,8 @@ export function userCollections(): { id: string; name: string; apps: () => App[]
 
 function custom(fn: string, app: App): string[] {
   try {
-    const urls = appStore[fn]?.(app);
+    const overview = appStore.GetAppOverviewByAppID?.(app.appid) ?? app;
+    const urls = appStore[fn]?.(overview);
     return Array.isArray(urls) ? urls : [];
   } catch {
     return [];
@@ -111,7 +113,11 @@ function steamAsset(app: App, file: string): string[] {
   return [`/assets/${app.appid}/${file}`, `${CDN}/${app.appid}/${file}`];
 }
 
-export const heroUrls = (app: App) => [...custom("GetCustomHeroImageURLs", app), ...steamAsset(app, "library_hero.jpg")];
+export const heroUrls = (app: App, localWallpaper?: string | null) => [
+  ...custom("GetCustomHeroImageURLs", app),
+  ...(localWallpaper ? [localWallpaper] : []),
+  ...steamAsset(app, "library_hero.jpg"),
+];
 export const logoUrls = (app: App) => [...custom("GetCustomLogoImageURLs", app), ...steamAsset(app, "logo.png")];
 export const landscapeUrls = (app: App) => [
   ...custom("GetCustomLandcapeImageURLs", app),
@@ -137,11 +143,11 @@ export function openDetails(app: App) {
 
 type AnyFn = (...args: any[]) => any;
 /** Steam's game context menu: the component that renders it and its placement options. */
-let gameMenu: { component: AnyFn; options?: AnyFn } | null | undefined;
+let gameMenu: { component: AnyFn; options?: AnyFn } | undefined;
+let musicMenuPatch: Patch | undefined;
 
 function findGameMenu() {
-  if (gameMenu !== undefined) return gameMenu;
-  gameMenu = null;
+  if (gameMenu) return gameMenu;
   try {
     // The module that builds the library's game menu; the same one SteamGridDB hooks to add "Change artwork".
     const isOptions = (e: any) => typeof e === "function" && String(e).includes("().LibraryContextMenu");
@@ -154,6 +160,42 @@ function findGameMenu() {
     console.error("[ps5-dashboard] game menu not found", e);
   }
   return gameMenu;
+}
+
+/** Add a native menu item to Steam's game menu, including when SteamGridDB also patches it. */
+export function syncGameMusicMenu(enabled: boolean) {
+  if (!enabled) {
+    musicMenuPatch?.unpatch();
+    musicMenuPatch = undefined;
+    return;
+  }
+  if (musicMenuPatch || !MenuItem) return;
+  const menu = findGameMenu();
+  if (!menu) return;
+  try {
+    const prototype = fakeRenderComponent(menu.component)?.type?.prototype;
+    if (typeof prototype?.render !== "function") return;
+    musicMenuPatch = afterPatch(prototype, "render", function (
+      this: { props?: { overview?: App } },
+      _args,
+      result: unknown,
+    ) {
+      const app = this.props?.overview;
+      if (!app || !isValidElement<{ children?: ReactNode }>(result)) return result;
+      const children = result.props.children;
+      if (!Array.isArray(children)) return result;
+      // Some Steam builds wrap the item list in an array with a separate footer.
+      const items = Array.isArray(children[0]) ? children[0] : children;
+      const key = "psd-change-menu-music";
+      if (items.some((item) => item?.key === key)) return result;
+      const item = createElement(MenuItem, { key, onSelected: () => void changeMenuMusic(app.appid, app.display_name) }, t.changeMenuMusic);
+      const updated = [...items, item];
+      return cloneElement(result, { children: items === children ? updated : [updated, ...children.slice(1)] });
+    });
+  } catch (error) {
+    removeHookStubs();
+    console.warn("[ps5-dashboard] could not add the menu music action", error);
+  }
 }
 
 /**
@@ -189,6 +231,7 @@ export function launch(app: App) {
     openDetails(app);
     return;
   }
+  fadeMenuMusicForLaunch();
   try {
     SteamClient.Apps.RunGame(app.gameid ?? String(app.appid), "", -1, LAUNCH_SOURCE);
   } catch (e) {

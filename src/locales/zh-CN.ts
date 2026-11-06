@@ -68,6 +68,9 @@ const zhCN: Strings = {
   details: "详细信息",
   moreOptions: "更多选项",
   gameMenu: "游戏选项",
+  changeMenuMusic: "更改菜单音乐",
+  menuMusicSaved: "菜单音乐已保存",
+  menuMusicFailed: "无法保存菜单音乐",
   select: "选择",
   running: "运行中",
 

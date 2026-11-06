@@ -68,6 +68,9 @@ const ko: Strings = {
   details: "세부 정보",
   moreOptions: "추가 옵션",
   gameMenu: "게임 옵션",
+  changeMenuMusic: "메뉴 음악 변경",
+  menuMusicSaved: "메뉴 음악을 저장했습니다",
+  menuMusicFailed: "메뉴 음악을 저장하지 못했습니다",
   select: "선택",
   running: "실행 중",
 

@@ -68,6 +68,9 @@ const zhTW: Strings = {
   details: "詳細資料",
   moreOptions: "更多選項",
   gameMenu: "遊戲選項",
+  changeMenuMusic: "變更選單音樂",
+  menuMusicSaved: "選單音樂已儲存",
+  menuMusicFailed: "無法儲存選單音樂",
   select: "選擇",
   running: "執行中",
 

@@ -72,6 +72,9 @@ const ru: Strings = {
   details: "Подробнее",
   moreOptions: "Другие действия",
   gameMenu: "Параметры игры",
+  changeMenuMusic: "Изменить музыку меню",
+  menuMusicSaved: "Музыка меню сохранена",
+  menuMusicFailed: "Не удалось сохранить музыку меню",
   select: "Выбрать",
   running: "Запущена",
 

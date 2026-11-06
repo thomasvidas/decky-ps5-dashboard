@@ -68,6 +68,9 @@ const de: Strings = {
   details: "Details",
   moreOptions: "Weitere Optionen",
   gameMenu: "Spieloptionen",
+  changeMenuMusic: "Menümusik ändern",
+  menuMusicSaved: "Menümusik gespeichert",
+  menuMusicFailed: "Menümusik konnte nicht gespeichert werden",
   select: "Auswählen",
   running: "Läuft",
 

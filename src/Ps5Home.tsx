@@ -1,3 +1,4 @@
+import { callable } from "@decky/api";
 import { Focusable, Navigation } from "@decky/ui";
 import { ReactNode, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FaSteam } from "react-icons/fa";
@@ -19,6 +20,7 @@ import {
 
 import { ActionTile, Art, Button, GameTile, Row } from "./components";
 import { ActionCard, ActionCards, GameCards } from "./InfoCards";
+import { useMenuMusic } from "./menuMusic";
 import { currentSettings } from "./settings";
 import { t } from "./i18n";
 import {
@@ -51,6 +53,7 @@ const BACKDROP_DELAY_MS = 140;
 const LOWER_ROW_ANCHOR = 0.3;
 /** Kept on the top-row tile the game info belongs to, so it stays big while the Play button has focus. */
 const SELECTED_CLASS = "psd-selected";
+const getWallpaper = callable<[appid: number], string | null>("get_wallpaper");
 
 /** What the top row has selected: a game, or one of the Store / Game Library tiles at its ends. */
 type Pick = { app: App } | { title: string; description: string; icon: ReactNode; go: () => void; cards: ActionCard[] };
@@ -77,23 +80,37 @@ function slideTo(el: HTMLElement) {
  * one is dropped once it's covered, so at most two images are ever on screen.
  */
 function Backdrop({ app, dim }: { app?: App; dim: boolean }) {
-  const [layers, setLayers] = useState<App[]>(app ? [app] : []);
+  const [layers, setLayers] = useState<{ appid: number; sources: string[] }[]>([]);
   useEffect(() => {
-    if (app) setLayers((l) => (l[l.length - 1]?.appid === app.appid ? l : [...l.slice(-1), app]));
+    if (!app) return;
+    let cancelled = false;
+    getWallpaper(app.appid)
+      .catch(() => null)
+      .then((wallpaper) => {
+        if (cancelled) return;
+        const sources = [...heroUrls(app, wallpaper), ...landscapeUrls(app)];
+        setLayers((l) => {
+          const previous = l[l.length - 1]?.appid === app.appid ? l.slice(0, -1) : l.slice(-1);
+          return [...previous, { appid: app.appid, sources }];
+        });
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [app]);
   const drop = () => setLayers((l) => (l.length > 1 ? l.slice(-1) : l));
   return (
     <div className={`psd-backdrop ${dim ? "psd-dim" : ""} ${app ? "" : "psd-backdrop-empty"}`}>
       <div className="psd-backdrop-art">
-        {layers.map((a, i) => (
+        {layers.map((layer, i) => (
           <div
-            key={a.appid}
+            key={layer.appid}
             className={`psd-backdrop-layer ${i === layers.length - 1 ? "psd-backdrop-new" : ""}`}
             onAnimationEnd={i === layers.length - 1 ? drop : undefined}
           >
             <Art
               className="psd-backdrop-img"
-              sources={[...heroUrls(a), ...landscapeUrls(a)]}
+              sources={layer.sources}
               fallback={<div className="psd-backdrop-img psd-backdrop-none" />}
             />
           </div>
@@ -153,20 +170,22 @@ interface TopRowProps {
   recents: App[];
   goTab: GoTab;
   onTopRow: (pick: Pick, el: HTMLElement) => void;
+  onHover: (appid?: number) => void;
 }
 
 interface LowerRowsProps {
   favorites: App[];
   installed: App[];
   goTab: GoTab;
-  onLowerRow: (el: HTMLElement) => void;
+  onLowerRow: (el: HTMLElement, appid?: number) => void;
+  onHover: (appid?: number) => void;
 }
 
 /**
  * All the tiles. Memoized with stable props, so moving the focus only re-renders the background
  * and the game info, not every tile (each one is a Steam focus node, which is costly to update).
  */
-const TopRow = memo(function TopRow({ recents, goTab, onTopRow }: TopRowProps) {
+const TopRow = memo(function TopRow({ recents, goTab, onTopRow, onHover }: TopRowProps) {
   const store: Pick = {
     title: t.storeTitle,
     description: t.storeDesc,
@@ -209,6 +228,7 @@ const TopRow = memo(function TopRow({ recents, goTab, onTopRow }: TopRowProps) {
             size="home"
             preferredFocus={i === 0}
             onFocus={(a, el) => onTopRow({ app: a }, el)}
+            onHover={onHover}
           />
         ))}
         <ActionTile
@@ -223,13 +243,13 @@ const TopRow = memo(function TopRow({ recents, goTab, onTopRow }: TopRowProps) {
 });
 
 /** The rows further down, under the game info. Same memo trick as TopRow. */
-const LowerRows = memo(function LowerRows({ favorites, installed, goTab, onLowerRow }: LowerRowsProps) {
+const LowerRows = memo(function LowerRows({ favorites, installed, goTab, onLowerRow, onHover }: LowerRowsProps) {
   return (
     <>
       {favorites.length > 0 && (
         <Row title={t.rowFavorites}>
           {favorites.map((app) => (
-            <GameTile key={app.appid} app={app} size="small" onFocus={(_a, el) => onLowerRow(el)} />
+            <GameTile key={app.appid} app={app} size="small" onFocus={(a, el) => onLowerRow(el, a.appid)} onHover={onHover} />
           ))}
         </Row>
       )}
@@ -237,7 +257,7 @@ const LowerRows = memo(function LowerRows({ favorites, installed, goTab, onLower
       {installed.length > 0 && (
         <Row title={t.rowInstalled}>
           {installed.map((app) => (
-            <GameTile key={app.appid} app={app} size="small" onFocus={(_a, el) => onLowerRow(el)} />
+            <GameTile key={app.appid} app={app} size="small" onFocus={(a, el) => onLowerRow(el, a.appid)} onHover={onHover} />
           ))}
         </Row>
       )}
@@ -267,10 +287,13 @@ export function HomeTab({ goTab }: { goTab: GoTab }) {
   const [pick, setPick] = useState<Pick | undefined>(recents[0] ? { app: recents[0] } : undefined);
   const [backdrop, setBackdrop] = useState<App | undefined>(recents[0]);
   const [lowered, setLowered] = useState(false);
+  const [lowerAppId, setLowerAppId] = useState<number>();
+  const [hoveredAppId, setHoveredAppId] = useState<number>();
   const scroller = useRef<HTMLDivElement>(null);
   const selectedEl = useRef<HTMLElement | null>(null);
 
   const pickedApp = pick && "app" in pick ? pick.app : undefined;
+  useMenuMusic(hoveredAppId ?? (lowered ? lowerAppId : pickedApp?.appid), scroller);
   useEffect(() => {
     const t = window.setTimeout(() => setBackdrop(pickedApp), BACKDROP_DELAY_MS);
     return () => window.clearTimeout(t);
@@ -302,12 +325,15 @@ export function HomeTab({ goTab }: { goTab: GoTab }) {
       el.classList.add(SELECTED_CLASS);
       selectedEl.current = el;
       slideTo(el);
+      setHoveredAppId(undefined);
       setPick(next);
       toTop();
     },
     [toTop],
   );
-  const onLowerRow = useCallback((el: HTMLElement) => {
+  const onLowerRow = useCallback((el: HTMLElement, appid?: number) => {
+    setHoveredAppId(undefined);
+    setLowerAppId(appid);
     setLowered(true);
     const section = el.closest<HTMLElement>(".psd-section");
     const s = scroller.current;
@@ -319,11 +345,11 @@ export function HomeTab({ goTab }: { goTab: GoTab }) {
       <Backdrop app={backdrop} dim={lowered} />
       <Focusable className={`psd-scroller ${lowered ? "psd-lowered" : ""}`} ref={scroller} flow-children="column">
         <div className="psd-top-space" />
-        <TopRow recents={recents} goTab={goTab} onTopRow={onTopRow} />
+        <TopRow recents={recents} goTab={goTab} onTopRow={onTopRow} onHover={setHoveredAppId} />
         <div className="psd-hero">
           <GameInfo pick={pick} onFocus={toTop} />
         </div>
-        <LowerRows favorites={favorites} installed={installed} goTab={goTab} onLowerRow={onLowerRow} />
+        <LowerRows favorites={favorites} installed={installed} goTab={goTab} onLowerRow={onLowerRow} onHover={setHoveredAppId} />
         <div className="psd-bottom-space" />
       </Focusable>
     </>

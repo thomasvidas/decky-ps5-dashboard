@@ -68,6 +68,9 @@ const tr: Strings = {
   details: "Ayrıntılar",
   moreOptions: "Diğer seçenekler",
   gameMenu: "Oyun seçenekleri",
+  changeMenuMusic: "Menü müziğini değiştir",
+  menuMusicSaved: "Menü müziği kaydedildi",
+  menuMusicFailed: "Menü müziği kaydedilemedi",
   select: "Seç",
   running: "Çalışıyor",
 

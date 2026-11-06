@@ -68,6 +68,9 @@ const ja: Strings = {
   details: "詳細",
   moreOptions: "その他のオプション",
   gameMenu: "ゲームのオプション",
+  changeMenuMusic: "メニュー音楽を変更",
+  menuMusicSaved: "メニュー音楽を保存しました",
+  menuMusicFailed: "メニュー音楽を保存できませんでした",
   select: "選択",
   running: "実行中",
 
