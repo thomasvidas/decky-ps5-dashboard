@@ -26,19 +26,46 @@ def valid_appid(appid: int) -> bool:
     return type(appid) is int and -(2**31) <= appid < 2**32
 
 
+def menu_music_stat(track: Path) -> os.stat_result | None:
+    try:
+        info = track.stat(follow_symlinks=False)
+    except FileNotFoundError:
+        return None
+    return info if stat.S_ISREG(info.st_mode) and info.st_size else None
+
+
 def get_menu_music(appid: int) -> str | None:
     if not valid_appid(appid):
         return None
     with menu_music_lock:
         for extension in MENU_MUSIC_EXTENSIONS:
             track = MENU_MUSIC_DIR / f"{appid}{extension}"
-            try:
-                info = track.stat(follow_symlinks=False)
-            except FileNotFoundError:
-                continue
-            if stat.S_ISREG(info.st_mode) and info.st_size:
+            if info := menu_music_stat(track):
                 return f"{track.name}?v={info.st_mtime_ns}"
     return None
+
+
+def list_menu_music() -> list[int]:
+    appids = set()
+    with menu_music_lock:
+        for track in MENU_MUSIC_DIR.glob("*"):
+            if track.suffix not in MENU_MUSIC_EXTENSIONS:
+                continue
+            try:
+                appid = int(track.stem)
+            except ValueError:
+                continue
+            if valid_appid(appid) and str(appid) == track.stem and menu_music_stat(track):
+                appids.add(appid)
+    return sorted(appids)
+
+
+def remove_menu_music(appid: int) -> None:
+    if not valid_appid(appid):
+        raise ValueError("Invalid app ID")
+    with menu_music_lock:
+        for extension in MENU_MUSIC_EXTENSIONS:
+            (MENU_MUSIC_DIR / f"{appid}{extension}").unlink(missing_ok=True)
 
 
 def save_menu_music(appid: int, path: str) -> None:
@@ -105,6 +132,12 @@ class Plugin:
 
     async def get_menu_music(self, appid: int) -> str | None:
         return await asyncio.to_thread(get_menu_music, appid)
+
+    async def list_menu_music(self) -> list[int]:
+        return await asyncio.to_thread(list_menu_music)
+
+    async def remove_menu_music(self, appid: int) -> None:
+        await asyncio.to_thread(remove_menu_music, appid)
 
     async def save_menu_music(self, appid: int, path: str) -> None:
         await asyncio.to_thread(save_menu_music, appid, path)

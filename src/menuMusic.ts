@@ -7,10 +7,28 @@ import { t } from "./i18n";
 const getStartPath = callable<[], string>("menu_music_start_path");
 const saveTrack = callable<[appid: number, path: string]>("save_menu_music");
 const getTrack = callable<[appid: number], string | null>("get_menu_music");
+const listTracks = callable<[], number[]>("list_menu_music");
+const removeTrack = callable<[appid: number]>("remove_menu_music");
 const AUDIO_EXTENSIONS = ["mp3", "ogg", "wav", "flac"];
 const PREVIEW_DELAY_MS = 120;
 const FADE_MS = 220;
 const PREVIEW_VOLUME = 0.35;
+
+// Steam builds its menu items synchronously, so load track assignments before opening a menu.
+const gamesWithMusic = new Set<number>();
+let trackList: Promise<void> | undefined;
+let lastTrackChange = Promise.resolve();
+
+export function loadMenuMusicIndex() {
+  return trackList ??= listTracks().then((appids) => {
+    for (const appid of appids) gamesWithMusic.add(appid);
+  }).catch((error) => {
+    trackList = undefined;
+    console.warn("[ps5-dashboard] menu music list failed", error);
+  });
+}
+
+export const hasMenuMusic = (appid: number) => gamesWithMusic.has(appid);
 
 interface Track {
   audio: HTMLAudioElement;
@@ -189,6 +207,18 @@ export function fadeMenuMusicForLaunch() {
   homePreview?.beginLaunch();
 }
 
+function changeTrack(appid: number, assigned: boolean, write: () => Promise<void>) {
+  const change = lastTrackChange.then(async () => {
+    await write();
+    await loadMenuMusicIndex();
+    if (assigned) gamesWithMusic.add(appid);
+    else gamesWithMusic.delete(appid);
+    homePreview?.reload(appid);
+  });
+  lastTrackChange = change.catch(() => {});
+  return change;
+}
+
 export async function changeMenuMusic(appid: number, name: string) {
   try {
     const startPath = await getStartPath();
@@ -198,11 +228,20 @@ export async function changeMenuMusic(appid: number, name: string) {
         throw error;
       });
     if (!file) return;
-    await saveTrack(appid, file.path);
-    homePreview?.reload(appid);
+    await changeTrack(appid, true, () => saveTrack(appid, file.path));
     toaster.toast({ title: t.menuMusicSaved, body: name });
   } catch (error) {
     console.warn("[ps5-dashboard] menu music import failed", error);
     toaster.toast({ title: t.menuMusicFailed, body: name });
+  }
+}
+
+export async function removeMenuMusic(appid: number, name: string) {
+  try {
+    await changeTrack(appid, false, () => removeTrack(appid));
+    toaster.toast({ title: t.menuMusicRemoved, body: name });
+  } catch (error) {
+    console.warn("[ps5-dashboard] menu music removal failed", error);
+    toaster.toast({ title: t.menuMusicRemoveFailed, body: name });
   }
 }

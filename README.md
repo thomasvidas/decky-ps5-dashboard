@@ -139,6 +139,7 @@ The wallpaper folder accepts JPEG, PNG, and WebP images up to 4 MiB.
 
 Open a game's context menu and choose **Change Menu Music**. Pick an MP3, Ogg, WAV, or FLAC file. The plugin
 copies the track into `~/homebrew/data/ps5-dashboard/menu-music/`. Choosing another file replaces it.
+For games with an assigned track, **Remove Menu Music** deletes the plugin's copy and fades out its preview.
 PS5 Home loops the track while the game is focused or hovered and fades it out when you launch a game.
 
 ## Performance

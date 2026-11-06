@@ -2,7 +2,7 @@ import { MenuItem, Navigation, Patch, Router, afterPatch, fakeRenderComponent, f
 import { ReactNode, cloneElement, createElement, isValidElement } from "react";
 
 import { t } from "./i18n";
-import { changeMenuMusic, fadeMenuMusicForLaunch } from "./menuMusic";
+import { changeMenuMusic, fadeMenuMusicForLaunch, hasMenuMusic, loadMenuMusicIndex, removeMenuMusic } from "./menuMusic";
 
 /** The subset of Steam's SteamAppOverview this plugin reads. */
 export interface App {
@@ -162,13 +162,14 @@ function findGameMenu() {
   return gameMenu;
 }
 
-/** Add a native menu item to Steam's game menu, including when SteamGridDB also patches it. */
+/** Add native music actions to Steam's game menu, including when SteamGridDB also patches it. */
 export function syncGameMusicMenu(enabled: boolean) {
   if (!enabled) {
     musicMenuPatch?.unpatch();
     musicMenuPatch = undefined;
     return;
   }
+  void loadMenuMusicIndex();
   if (musicMenuPatch || !MenuItem) return;
   const menu = findGameMenu();
   if (!menu) return;
@@ -190,6 +191,12 @@ export function syncGameMusicMenu(enabled: boolean) {
       if (items.some((item) => item?.key === key)) return result;
       const item = createElement(MenuItem, { key, onSelected: () => void changeMenuMusic(app.appid, app.display_name) }, t.changeMenuMusic);
       const updated = [...items, item];
+      if (hasMenuMusic(app.appid)) {
+        updated.push(createElement(MenuItem, {
+          key: "psd-remove-menu-music",
+          onSelected: () => void removeMenuMusic(app.appid, app.display_name),
+        }, t.removeMenuMusic));
+      }
       return cloneElement(result, { children: items === children ? updated : [updated, ...children.slice(1)] });
     });
   } catch (error) {
