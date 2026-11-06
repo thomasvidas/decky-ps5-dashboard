@@ -116,6 +116,7 @@ Everything lives in the plugin panel in Quick Access. Settings are saved to
 | Home background | Game art, accent gradient or dark | Game art |
 | Focus | White glow (PS5) or accent glow | White |
 | Tile corner radius | 0–24 px | 12 px |
+| Native Steam capsule ratio | Uses Steam's 2:3 portrait proportions for game tiles on PS5 Home and in the PS5 Game Library | Off |
 | Control Center-style menus | Restyles the Steam menu, Quick Access and option menus | On |
 | Style Steam's library | PS5-style capsules, focus and tabs in Steam's own library; turn off for Steam's look or TabMaster | On |
 | Clean home screen | Hides What's New, Friends and Recommended on Steam's own home | Off |

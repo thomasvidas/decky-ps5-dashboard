@@ -60,15 +60,16 @@ type GoTab = (tab: TabId, view?: string) => void;
 const PINNED = ".psd-root, .psd-content, .psd-section-clip, .psd-row-anchor";
 
 /**
- * Slides the home row so the selected tile sits at the left edge, like the PS5. Index times a fixed
- * slot width gives the offset, so nothing is measured (no layout read mid-animation) and the move is a
- * transform the GPU runs on its own.
+ * Slides the home row so the selected tile sits at the left edge, like the PS5. The first slot is
+ * Store, followed by game slots up to the Library tile. CSS resolves their widths without a layout read.
  */
 function slideTo(el: HTMLElement) {
   const row = el.parentElement;
   if (!row) return;
   const i = Array.prototype.indexOf.call(row.children, el);
-  row.style.transform = `translate3d(calc(${-i} * (var(--psd-slot) + var(--psd-gap))), 0, 0)`;
+  row.style.transform = i === 0
+    ? "none"
+    : `translate3d(calc(-1 * (var(--psd-slot) + ${i - 1} * var(--psd-game-slot-width) + ${i} * var(--psd-gap))), 0, 0)`;
 }
 
 /**

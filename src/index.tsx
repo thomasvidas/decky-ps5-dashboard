@@ -226,6 +226,14 @@ function Content() {
             onChange={(radius) => change({ radius })}
           />
         </PanelSectionRow>
+        <PanelSectionRow>
+          <ToggleField
+            label={t.nativeCapsuleRatioLabel}
+            description={t.nativeCapsuleRatioDesc}
+            checked={st.nativeCapsuleRatio}
+            onChange={(nativeCapsuleRatio) => change({ nativeCapsuleRatio })}
+          />
+        </PanelSectionRow>
       </PanelSection>
 
       <PanelSection title={t.layoutSection}>

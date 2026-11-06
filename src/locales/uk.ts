@@ -33,6 +33,8 @@ const uk: Strings = {
   heroSpaceLabel: "Місце для обкладинки",
   heroSpaceDesc: "Лише для головної сторінки Steam (коли головний екран PS5 вимкнено).",
   radiusLabel: "Заокруглення плиток",
+  nativeCapsuleRatioLabel: "Оригінальні пропорції обкладинок Steam",
+  nativeCapsuleRatioDesc: "Показує плитки ігор на головному екрані та в бібліотеці PS5 у вертикальному форматі Steam (2:3).",
   layoutSection: "Макет",
   controlCenterLabel: "Меню в стилі центру керування",
   controlCenterDesc: "Меню Steam і швидкий доступ із темною панеллю, заокругленими кутами та білим виділеним пунктом.",

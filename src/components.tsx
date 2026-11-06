@@ -94,7 +94,7 @@ export function useFocusHook(onFocus?: (el: HTMLElement) => void) {
 }
 
 /**
- * A rounded square PS5 tile. The art sits in a box with a separate ring element, so focus fades the
+ * A rounded PS5 tile. The art sits in a box with a separate ring element, so focus fades the
  * ring's opacity in instead of repainting a shadow, and home tiles scale the box instead of resizing:
  * both run on the GPU without touching the layout.
  */
@@ -162,7 +162,7 @@ export function GameTile({
       onOptions={() => openDetails(app)}
       onMenu={(anchor) => openGameMenu(app, anchor)}
       okLabel={running ? t.resume : playable ? t.play : t.viewGame}
-      className={playable ? "" : "psd-not-installed"}
+      className={playable ? "psd-game-tile" : "psd-game-tile psd-not-installed"}
       badge={running ? <div className="psd-badge">{t.running}</div> : undefined}
     >
       <Art

@@ -13,6 +13,8 @@ export const PS5_CSS = `
   --psd-cf: var(--psd-focus, #FFFFFF);
   --psd-cr: var(--psd-radius, 12px);
   --psd-cglow: 0 0 0 0.4vh var(--psd-cf), 0 0 3.2vh color-mix(in srgb, var(--psd-cf) 45%, transparent);
+  --psd-small-tile-size: 17vh;
+  --psd-small-game-width: calc(var(--psd-small-tile-size) * var(--psd-capsule-width-scale, 1));
   position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
   overflow: hidden; color: #fff;
   background: radial-gradient(ellipse at 85% -10%, color-mix(in srgb, var(--psd-ca) 55%, #04060c) 0%, #070b16 45%, #04060c 80%);
@@ -111,6 +113,8 @@ export const PS5_CSS = `
  */
 .psd-home-row {
   --psd-slot: 12vh; --psd-big: 18vh; --psd-gap: 1.8vh;
+  --psd-game-slot-width: calc(var(--psd-slot) * var(--psd-capsule-width-scale, 1));
+  --psd-game-big-width: calc(var(--psd-big) * var(--psd-capsule-width-scale, 1));
   margin-top: 0; padding: 3vh 0 3.6vh; overflow: hidden; overflow: clip;
   animation: psd-intro 600ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
@@ -211,7 +215,9 @@ export const PS5_CSS = `
 /* ---------- tiles ---------- */
 .psd-tile { position: relative; flex: 0 0 auto; border-radius: var(--psd-cr); transition: transform 150ms ease; }
 .psd-tile-normal { width: 22vh; height: 22vh; }
-.psd-tile-small { width: 17vh; height: 17vh; }
+.psd-tile-small { width: var(--psd-small-tile-size); height: var(--psd-small-tile-size); }
+.psd-tile-normal.psd-game-tile { width: calc(22vh * var(--psd-capsule-width-scale, 1)); }
+.psd-tile-small.psd-game-tile { width: var(--psd-small-game-width); }
 .psd-tile-box { position: absolute; inset: 0; border-radius: var(--psd-cr); }
 .psd-tile-art { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; background: #151a26; }
 .psd-tile-ring {
@@ -242,11 +248,17 @@ export const PS5_CSS = `
 /* Home row tiles (see .psd-home-row). The art box is drawn at full size and scaled down when not
    selected, so the picture stays sharp when it grows. */
 .psd-tile-home {
-  width: var(--psd-slot); height: var(--psd-slot); border-radius: 0;
+  --psd-tile-slot-width: var(--psd-slot);
+  --psd-tile-big-width: var(--psd-big);
+  width: var(--psd-tile-slot-width); height: var(--psd-slot); border-radius: 0;
   transition: transform 340ms cubic-bezier(0.22, 0.8, 0.24, 1), opacity 220ms ease;
 }
+.psd-tile-home.psd-game-tile {
+  --psd-tile-slot-width: var(--psd-game-slot-width);
+  --psd-tile-big-width: var(--psd-game-big-width);
+}
 .psd-tile-home .psd-tile-box {
-  right: auto; bottom: auto; width: var(--psd-big); height: var(--psd-big);
+  right: auto; bottom: auto; width: var(--psd-tile-big-width); height: var(--psd-big);
   border-radius: calc(var(--psd-cr) * 1.3);
   transform: scale(0.6667); transform-origin: 0 0;
   transition: transform 340ms cubic-bezier(0.22, 0.8, 0.24, 1);
@@ -256,6 +268,9 @@ export const PS5_CSS = `
 .psd-tile-home.psd-focused .psd-tile-box { transform: translate3d(0, -0.7vh, 0); }
 .psd-tile-home.psd-selected ~ .psd-tile-home {
   transform: translate3d(calc(var(--psd-big) - var(--psd-slot)), 0, 0);
+}
+.psd-tile-home.psd-game-tile.psd-selected ~ .psd-tile-home {
+  transform: translate3d(calc(var(--psd-game-big-width) - var(--psd-game-slot-width)), 0, 0);
 }
 .psd-tile-home:has(~ .psd-selected):not(:has(+ .psd-selected)) { opacity: 0; }
 /* Soft glow and a drop shadow; the edge itself is the aura below. */
@@ -285,7 +300,7 @@ export const PS5_CSS = `
 @keyframes psd-spin { to { transform: rotate(1turn); } }
 /* The name goes under the next tiles, like the PS5. */
 .psd-tile-home .psd-tile-name {
-  left: calc(var(--psd-big) + var(--psd-gap)); right: auto; bottom: auto; top: calc(var(--psd-slot) + 1.4vh);
+  left: calc(var(--psd-tile-big-width) + var(--psd-gap)); right: auto; bottom: auto; top: calc(var(--psd-slot) + 1.4vh);
   width: max-content; max-width: 60vh; padding: 0; background: none; border-radius: 0;
   font-size: 2.6vh; font-weight: 500; line-height: 1.25;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -342,7 +357,7 @@ export const PS5_CSS = `
 .psd-lib-empty { padding: 2vh 0.6vh; font-size: 2vh; opacity: 0.6; }
 .psd-grid {
   flex: 1; min-height: 0; overflow: hidden;
-  display: grid; grid-template-columns: repeat(auto-fill, 17vh); gap: 2vh; align-content: start;
+  display: grid; grid-template-columns: repeat(auto-fill, var(--psd-small-game-width)); gap: 2vh; align-content: start;
   padding: 1.4vh 4vw 30vh 0.6vh; scroll-padding: 2vh 0;
 }
 

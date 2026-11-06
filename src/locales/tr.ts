@@ -29,6 +29,8 @@ const tr: Strings = {
   heroSpaceLabel: "Görsel için alan",
   heroSpaceDesc: "Yalnızca Steam ana sayfası için (PS5 ana ekranı kapalıyken).",
   radiusLabel: "Kutucuk köşe yuvarlaklığı",
+  nativeCapsuleRatioLabel: "Steam'in özgün kapak oranı",
+  nativeCapsuleRatioDesc: "PS5 ana ekranında ve oyun kütüphanesinde oyun kutucuklarını Steam'in 2:3 dikey biçiminde gösterir.",
   layoutSection: "Düzen",
   controlCenterLabel: "Kontrol merkezi tarzı menüler",
   controlCenterDesc: "Koyu panel, yuvarlak köşeler ve beyaz seçili öğeyle Steam menüsü ve Hızlı Erişim.",

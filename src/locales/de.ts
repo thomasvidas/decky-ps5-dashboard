@@ -29,6 +29,8 @@ const de: Strings = {
   heroSpaceLabel: "Platz für die Grafik",
   heroSpaceDesc: "Nur für Steams Startseite (wenn der PS5-Startbildschirm aus ist).",
   radiusLabel: "Eckenradius der Kacheln",
+  nativeCapsuleRatioLabel: "Originales Steam-Coverformat",
+  nativeCapsuleRatioDesc: "Zeigt Spielkacheln auf der PS5-Startseite und in der PS5-Spielebibliothek im Steam-Hochformat (2:3).",
   layoutSection: "Layout",
   controlCenterLabel: "Menüs im Stil des Kontrollzentrums",
   controlCenterDesc: "Steam-Menü und Schnellzugriff mit dunklem Panel, runden Ecken und weißem ausgewähltem Eintrag.",

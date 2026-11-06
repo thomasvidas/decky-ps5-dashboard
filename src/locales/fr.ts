@@ -29,6 +29,8 @@ const fr: Strings = {
   heroSpaceLabel: "Espace pour l'illustration",
   heroSpaceDesc: "Uniquement pour l'accueil de Steam (écran d'accueil PS5 désactivé).",
   radiusLabel: "Arrondi des tuiles",
+  nativeCapsuleRatioLabel: "Format d’origine des jaquettes Steam",
+  nativeCapsuleRatioDesc: "Affiche les jeux au format portrait 2:3 de Steam sur l’accueil et dans la bibliothèque PS5.",
   layoutSection: "Disposition",
   controlCenterLabel: "Menus style centre de contrôle",
   controlCenterDesc: "Menu Steam et accès rapide avec un panneau sombre, des coins arrondis et l'élément sélectionné en blanc.",

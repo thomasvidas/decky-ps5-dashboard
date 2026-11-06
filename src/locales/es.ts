@@ -29,6 +29,8 @@ const es: Strings = {
   heroSpaceLabel: "Espacio para el arte",
   heroSpaceDesc: "Solo para el inicio de Steam (con la pantalla de inicio PS5 desactivada).",
   radiusLabel: "Redondeo de los bloques",
+  nativeCapsuleRatioLabel: "Proporción original de las carátulas de Steam",
+  nativeCapsuleRatioDesc: "Muestra las carátulas de los juegos en el formato vertical 2:3 de Steam en el inicio y en la biblioteca de PS5.",
   layoutSection: "Diseño",
   controlCenterLabel: "Menús estilo centro de control",
   controlCenterDesc: "Menú Steam y acceso rápido con panel oscuro, esquinas redondeadas y el elemento seleccionado en blanco.",

@@ -29,6 +29,8 @@ const zhCN: Strings = {
   heroSpaceLabel: "美术图空间",
   heroSpaceDesc: "仅用于 Steam 主页（关闭 PS5 主屏幕时）。",
   radiusLabel: "图块圆角",
+  nativeCapsuleRatioLabel: "Steam 原生封面比例",
+  nativeCapsuleRatioDesc: "在 PS5 主页和游戏库中以 Steam 的 2:3 竖版比例显示游戏图块。",
   layoutSection: "布局",
   controlCenterLabel: "控制中心风格菜单",
   controlCenterDesc: "Steam 菜单和快速访问使用深色面板、圆角和白色选中项。",

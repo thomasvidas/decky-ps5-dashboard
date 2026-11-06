@@ -33,6 +33,8 @@ const pl: Strings = {
   heroSpaceLabel: "Miejsce na grafikę",
   heroSpaceDesc: "Tylko dla ekranu głównego Steam (gdy ekran główny PS5 jest wyłączony).",
   radiusLabel: "Zaokrąglenie kafelków",
+  nativeCapsuleRatioLabel: "Oryginalne proporcje okładek Steam",
+  nativeCapsuleRatioDesc: "Wyświetla kafelki gier w pionowych proporcjach Steam (2:3) na ekranie głównym i w bibliotece gier PS5.",
   layoutSection: "Układ",
   controlCenterLabel: "Menu w stylu centrum sterowania",
   controlCenterDesc: "Menu Steam i szybki dostęp z ciemnym panelem, zaokrąglonymi rogami i białym zaznaczeniem.",

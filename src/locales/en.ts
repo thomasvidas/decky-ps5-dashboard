@@ -27,6 +27,8 @@ const en = {
   heroSpaceLabel: "Space for the art",
   heroSpaceDesc: "Only for Steam's home screen (with PS5 home screen turned off).",
   radiusLabel: "Tile corner radius",
+  nativeCapsuleRatioLabel: "Native Steam capsule ratio",
+  nativeCapsuleRatioDesc: "Uses Steam's 2:3 portrait proportions for game tiles on PS5 Home and in the PS5 Game Library.",
   layoutSection: "Layout",
   controlCenterLabel: "Control Center-style menus",
   controlCenterDesc: "Steam menu and Quick Access with a dark panel, rounded corners and a white focused item.",

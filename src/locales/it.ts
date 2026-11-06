@@ -29,6 +29,8 @@ const it: Strings = {
   heroSpaceLabel: "Spazio per l'immagine",
   heroSpaceDesc: "Solo per la Home di Steam (con la schermata Home PS5 disattivata).",
   radiusLabel: "Arrotondamento dei riquadri",
+  nativeCapsuleRatioLabel: "Proporzioni originali delle copertine di Steam",
+  nativeCapsuleRatioDesc: "Mostra i riquadri dei giochi nel formato verticale 2:3 di Steam nella schermata iniziale e nella raccolta PS5.",
   layoutSection: "Layout",
   controlCenterLabel: "Menu stile centro di controllo",
   controlCenterDesc: "Menu Steam e accesso rapido con pannello scuro, angoli arrotondati e voce selezionata in bianco.",

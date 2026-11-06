@@ -15,6 +15,8 @@ export interface Settings {
   heroSpace: number;
   /** Tile corner radius, in px. */
   radius: number;
+  /** Use Steam's 2:3 portrait proportions for game tiles on the PS5 screens. */
+  nativeCapsuleRatio: boolean;
   focus: FocusStyle;
   /** Restyle the Steam menu and Quick Access menu like the PS5 Control Center. */
   controlCenter: boolean;
@@ -55,6 +57,7 @@ export const DEFAULT_SETTINGS: Settings = {
   background: "art",
   heroSpace: 18,
   radius: 12,
+  nativeCapsuleRatio: false,
   focus: "white",
   controlCenter: true,
   hideShelves: false,

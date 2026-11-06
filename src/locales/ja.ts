@@ -29,6 +29,8 @@ const ja: Strings = {
   heroSpaceLabel: "アートの表示スペース",
   heroSpaceDesc: "Steamのホーム画面のみ（PS5ホーム画面がオフのとき）。",
   radiusLabel: "タイルの角の丸み",
+  nativeCapsuleRatioLabel: "Steam標準のカプセル比率",
+  nativeCapsuleRatioDesc: "PS5のホーム画面とゲームライブラリで、ゲームタイルをSteam標準の縦長比率（2:3）で表示します。",
   layoutSection: "レイアウト",
   controlCenterLabel: "コントロールセンター風のメニュー",
   controlCenterDesc: "Steamメニューとクイックアクセスを、暗いパネル、丸い角、白い選択項目にします。",

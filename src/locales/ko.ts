@@ -29,6 +29,8 @@ const ko: Strings = {
   heroSpaceLabel: "아트 공간",
   heroSpaceDesc: "Steam 홈 화면에서만 적용됩니다 (PS5 홈 화면이 꺼져 있을 때).",
   radiusLabel: "타일 모서리 둥글기",
+  nativeCapsuleRatioLabel: "Steam 기본 캡슐 비율",
+  nativeCapsuleRatioDesc: "PS5 홈 화면과 게임 라이브러리에서 게임 타일을 Steam의 세로형 2:3 비율로 표시합니다.",
   layoutSection: "레이아웃",
   controlCenterLabel: "제어 센터 스타일 메뉴",
   controlCenterDesc: "Steam 메뉴와 빠른 접근을 어두운 패널, 둥근 모서리, 흰색 선택 항목으로 바꿉니다.",
